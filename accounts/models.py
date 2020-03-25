@@ -49,3 +49,8 @@ class Order(models.Model):
     status = models.CharField(max_length=100, null=False, choices=STATUS)
     date_created = models.DateTimeField(auto_now_add=True, null=False)
 
+    def __str__(self):
+        template = '{0.customer} {0.product} {0.status}'
+        return template.format(self)
+
+
