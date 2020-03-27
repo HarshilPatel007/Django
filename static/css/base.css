@@ -5,16 +5,22 @@ body{
     background-color: #ebeff5;
 }
 
-
 #total-orders{
-    background-color: #4cb4c7;
+    background-color: #D17CC5;
 }
 
-
 #orders-delivered{
-    background-color: #7abecc;
+    background-color: #82D17C;
 }
 
 #orders-pending{
-    background-color: #7CD1C0;
+    background-color: #D1D17C;
+}
+
+#orders-out-for-delivery{
+    background-color: #9CD17C;
+}
+
+#orders-cancelled{
+    background-color: #D17C7C;
 }
