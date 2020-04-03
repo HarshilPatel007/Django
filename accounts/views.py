@@ -6,11 +6,13 @@ from .forms import OrderForm, UserRegistrationForm
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 # Create your views here.
 
 
+@login_required(login_url='login')
 def home(request):
     customers = Customer.objects.all()
     orders = Order.objects.all()
@@ -36,53 +38,59 @@ def home(request):
     return render(request, "dashboard.html", context)
 
 
-def loginPage(request):
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
 
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+            auth_user = authenticate(request, username=username, password=password)
 
-        auth_user = authenticate(request, username=username, password=password)
+            if auth_user is not None:
+                login(request, auth_user)
+                # return redirect('customer', customer_id=auth_user.id)
+                return redirect('home')
 
-        if auth_user is not None:
-            login(request, auth_user)
-            # return redirect('customer', customer_id=auth_user.id)
-            return redirect('home')
+            else:
+                messages.info(request, 'Username OR Password Is Incorrect.')
 
-        else:
-            messages.info(request, 'Username OR Password Is Incorrect.')
+        context = {
 
-    context = {
+        }
 
-    }
-
-    return render(request, "login.html", context)
+        return render(request, "login.html", context)
 
 
-def logoutPage(request):
+def logout_page(request):
     logout(request)
 
     return redirect('login')
 
 
-def registerPage(request):
+def register_page(request):
 
-    user_creation_form = UserRegistrationForm()
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        user_creation_form = UserRegistrationForm()
 
-    if request.method == 'POST':
-        data = UserRegistrationForm(request.POST)
-        if data.is_valid():
-            data.save()
-            messages.success(request, 'Account has been created successfully.')
-            return redirect('login')
+        if request.method == 'POST':
+            data = UserRegistrationForm(request.POST)
+            if data.is_valid():
+                data.save()
+                messages.success(request, 'Account has been created successfully.')
+                return redirect('login')
 
-    context = {
-        'user_register_form': user_creation_form
-    }
+        context = {
+            'user_register_form': user_creation_form
+        }
 
-    return render(request, "register.html", context)
+        return render(request, "register.html", context)
 
 
+@login_required(login_url='login')
 def customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
     orders = customer.order_set.all()
@@ -102,6 +110,7 @@ def customer(request, customer_id):
     return render(request, "customer.html", context)
 
 
+@login_required(login_url='login')
 def product(request):
     products = Product.objects.all()
 
@@ -112,6 +121,7 @@ def product(request):
     return render(request, "products.html", context)
 
 
+@login_required(login_url='login')
 def create_order(request):
     form = OrderForm()
 
@@ -129,6 +139,7 @@ def create_order(request):
     return render(request, "order.html", context)
 
 
+@login_required(login_url='login')
 def update_order(request, order_id):
     order = Order.objects.get(id=order_id)
     form = OrderForm(instance=order)
@@ -147,6 +158,7 @@ def update_order(request, order_id):
     return render(request, "order.html", context)
 
 
+@login_required(login_url='login')
 def delete_order(request, order_id):
     order = Order.objects.get(id=order_id)
 
