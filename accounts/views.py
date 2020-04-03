@@ -2,7 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from .models import *
-from .forms import OrderForm
+from .forms import OrderForm, UserRegistrationForm
+from .filters import OrderFilter
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create your views here.
 
@@ -32,19 +36,70 @@ def home(request):
     return render(request, "dashboard.html", context)
 
 
+def loginPage(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        auth_user = authenticate(request, username=username, password=password)
+
+        if auth_user is not None:
+            login(request, auth_user)
+            # return redirect('customer', customer_id=auth_user.id)
+            return redirect('home')
+
+        else:
+            messages.info(request, 'Username OR Password Is Incorrect.')
+
+    context = {
+
+    }
+
+    return render(request, "login.html", context)
+
+
+def logoutPage(request):
+    logout(request)
+
+    return redirect('login')
+
+
+def registerPage(request):
+
+    user_creation_form = UserRegistrationForm()
+
+    if request.method == 'POST':
+        data = UserRegistrationForm(request.POST)
+        if data.is_valid():
+            data.save()
+            messages.success(request, 'Account has been created successfully.')
+            return redirect('login')
+
+    context = {
+        'user_register_form': user_creation_form
+    }
+
+    return render(request, "register.html", context)
+
+
 def customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
     orders = customer.order_set.all()
 
     orders_total = customer.order_set.all().count()
 
+    myFilter = OrderFilter(request.GET, queryset=orders)
+    orders = myFilter.qs
+
     context = {
         'customer': customer,
         'orders': orders,
-        'total_orders': orders_total
+        'total_orders': orders_total,
+        'filters': myFilter
     }
 
-    return render(request, "customer.html",context)
+    return render(request, "customer.html", context)
 
 
 def product(request):
