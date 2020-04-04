@@ -7,12 +7,15 @@ from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib import messages
+from accounts.decorators import *
 
 # Create your views here.
 
 
 @login_required(login_url='login')
+@admin_only
 def home(request):
     customers = Customer.objects.all()
     orders = Order.objects.all()
@@ -38,29 +41,31 @@ def home(request):
     return render(request, "dashboard.html", context)
 
 
+def page_not_found(request):
+    return render(request, "404.html")
+
+@redirect_anon_user
 def login_page(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
 
-            auth_user = authenticate(request, username=username, password=password)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-            if auth_user is not None:
-                login(request, auth_user)
-                # return redirect('customer', customer_id=auth_user.id)
-                return redirect('home')
+        auth_user = authenticate(request, username=username, password=password)
 
-            else:
-                messages.info(request, 'Username OR Password Is Incorrect.')
+        if auth_user is not None:
+            login(request, auth_user)
+            # return redirect('customer', customer_id=auth_user.id)
+            return redirect('home')
 
-        context = {
+        else:
+            messages.info(request, 'Username OR Password Is Incorrect.')
 
-        }
+    context = {
 
-        return render(request, "login.html", context)
+    }
+
+    return render(request, "login.html", context)
 
 
 def logout_page(request):
@@ -69,25 +74,36 @@ def logout_page(request):
     return redirect('login')
 
 
+@redirect_anon_user
 def register_page(request):
 
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
-        user_creation_form = UserRegistrationForm()
+    user_creation_form = UserRegistrationForm()
 
-        if request.method == 'POST':
-            data = UserRegistrationForm(request.POST)
-            if data.is_valid():
-                data.save()
-                messages.success(request, 'Account has been created successfully.')
-                return redirect('login')
+    if request.method == 'POST':
+        data = UserRegistrationForm(request.POST)
+        if data.is_valid():
+            user = data.save()
+            # username = data.cleaned_data.get('username')
 
-        context = {
-            'user_register_form': user_creation_form
-        }
+            # Create Group If not available.
+            Group.objects.get_or_create(name='customer')
+            Group.objects.get_or_create(name='admin')
 
-        return render(request, "register.html", context)
+            # Add User to a customer group.
+            get_group = Group.objects.get(name='customer')
+            user.groups.add(get_group)
+
+            # Add user to customer
+            Customer.objects.create(user=user, name=user.username, email=user.email)
+
+            messages.success(request, 'Account has been created successfully.')
+            return redirect('login')
+
+    context = {
+        'user_register_form': user_creation_form
+    }
+
+    return render(request, "register.html", context)
 
 
 @login_required(login_url='login')
@@ -170,3 +186,24 @@ def delete_order(request, order_id):
         'del_order': order
     }
     return render(request, "delete_order.html", context)
+
+
+def user_profile(request):
+
+    customer = request.user.customer
+
+    orders = request.user.customer.order_set.all()
+
+    orders_total = orders.count()
+
+    myFilter = OrderFilter(request.GET, queryset=orders)
+    orders = myFilter.qs
+
+    context = {
+        'customer': customer,
+        'orders': orders,
+        'total_orders': orders_total,
+        'filters': myFilter
+    }
+
+    return render(request, "users.html", context)

@@ -24,3 +24,7 @@ body{
 #orders-cancelled{
     background-color: #D17C7C;
 }
+
+.text-white{
+    color: white;
+}
