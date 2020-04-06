@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from .models import *
-from .forms import OrderForm, UserRegistrationForm
+from .forms import OrderForm, UserRegistrationForm, CustomerForm
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -107,6 +107,7 @@ def register_page(request):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
     orders = customer.order_set.all()
@@ -127,6 +128,7 @@ def customer(request, customer_id):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def product(request):
     products = Product.objects.all()
 
@@ -138,6 +140,7 @@ def product(request):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def create_order(request):
     form = OrderForm()
 
@@ -156,6 +159,7 @@ def create_order(request):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def update_order(request, order_id):
     order = Order.objects.get(id=order_id)
     form = OrderForm(instance=order)
@@ -175,6 +179,7 @@ def update_order(request, order_id):
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def delete_order(request, order_id):
     order = Order.objects.get(id=order_id)
 
@@ -188,6 +193,8 @@ def delete_order(request, order_id):
     return render(request, "delete_order.html", context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
 def user_profile(request):
 
     customer = request.user.customer
@@ -207,3 +214,21 @@ def user_profile(request):
     }
 
     return render(request, "users.html", context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+def profile_settings(request):
+    customer = request.user.customer
+    form = CustomerForm(instance=customer)
+
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
+        if form.is_valid():
+            form.save()
+
+    context = {
+        'form':form
+    }
+
+    return render(request, "account_settings.html", context)
