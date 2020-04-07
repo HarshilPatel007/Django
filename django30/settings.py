@@ -40,7 +40,8 @@ INSTALLED_APPS = [
 
     # custom apps
     'accounts',
-    'django_filters'
+    'django_filters',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,6 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/images')
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -77,7 +77,7 @@ def logout_page(request):
 @redirect_anon_user
 def register_page(request):
 
-    user_creation_form = UserRegistrationForm()
+    data = UserRegistrationForm()
 
     if request.method == 'POST':
         data = UserRegistrationForm(request.POST)
@@ -100,7 +100,7 @@ def register_page(request):
             return redirect('login')
 
     context = {
-        'user_register_form': user_creation_form
+        'user_register_form': data
     }
 
     return render(request, "register.html", context)

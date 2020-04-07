@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
 
+
 class OrderForm(ModelForm):
 
     class Meta:
@@ -18,6 +19,19 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+
+    # email = forms.EmailField(required=True, label="Email", max_length=100)
+    # first_name = forms.CharField(required=True, label="First Name", max_length=100)
+    # last_name = forms.CharField(required=True, label="Last Name", max_length=100)
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super(UserRegistrationForm, self).__init__(*args, **kwargs)
+    #     for field_name in self.fields:
+    #         field = self.fields.get(field_name)
+    #         field.widget.attrs['placeholder'] = field.label
+    #         field.label = ''
+    #         field.help_text = None
 
 
 class CustomerForm(ModelForm):
