@@ -48,10 +48,10 @@ def page_not_found(request):
 def login_page(request):
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        auth_user = authenticate(request, username=username, password=password)
+        auth_user = authenticate(request, email=email, password=password)
 
         if auth_user is not None:
             login(request, auth_user)
