@@ -67,7 +67,7 @@ def login_page(request):
 
     }
 
-    return render(request, "login.html", context)
+    return render(request, "pages/login.html", context)
 
 
 def logout_page(request):
@@ -105,7 +105,7 @@ def register_page(request):
         'user_register_form': data
     }
 
-    return render(request, "register.html", context)
+    return render(request, "pages/register.html", context)
 
 
 # @login_required(login_url='login')
