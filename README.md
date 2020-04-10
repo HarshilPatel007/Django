@@ -15,7 +15,7 @@ Learning Django Framework.
 ### Topics tobe Learn
 
 1. Django REST Framework
-2. Bulding API and creating front-end with Angular framework.
+2. Creating an API and creating front-end with Angular framework.
 3. Signals
 4. Celery
 5. Web Sockets
