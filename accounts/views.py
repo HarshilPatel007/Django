@@ -14,8 +14,8 @@ from accounts.decorators import *
 # Create your views here.
 
 
-# @login_required(login_url='login')
-# @admin_only
+@login_required(login_url='login')
+@admin_only
 def home(request):
     # customers = Customer.objects.all()
     # orders = Order.objects.all()
@@ -38,14 +38,14 @@ def home(request):
     #     'orders_cancelled': orders_cancelled
     # }
     #
-    # return render(request, "dashboard.html", context)
+    # return render(request, "index.html", context)
     return render(request, "index.html")
 
 
 def page_not_found(request):
-    return render(request, "404.html")
+    return render(request, "pages/404.html")
 
-# @redirect_anon_user
+@redirect_anon_user
 def login_page(request):
 
     if request.method == 'POST':
@@ -76,7 +76,7 @@ def logout_page(request):
     return redirect('login')
 
 
-# @redirect_anon_user
+@redirect_anon_user
 def register_page(request):
 
     data = UserRegistrationForm()
@@ -108,8 +108,8 @@ def register_page(request):
     return render(request, "pages/register.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def customer(request, customer_id):
     customer = Customer.objects.get(id=customer_id)
     orders = customer.order_set.all()
@@ -126,11 +126,11 @@ def customer(request, customer_id):
         'filters': myFilter
     }
 
-    return render(request, "customer.html", context)
+    return render(request, "index.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
 def product(request):
     products = Product.objects.all()
 
@@ -141,8 +141,28 @@ def product(request):
     return render(request, "products.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'customer'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
+def order_list(request):
+
+    orders = request.user.customer.order_set.all()
+
+    orders_total = orders.count()
+
+    myFilter = OrderFilter(request.GET, queryset=orders)
+    orders = myFilter.qs
+
+    context = {
+        'orders': orders,
+        'total_orders': orders_total,
+        'filters': myFilter
+    }
+
+    return render(request, "pages/order-list.html", context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def create_order(request):
     form = OrderForm()
 
@@ -160,8 +180,8 @@ def create_order(request):
     return render(request, "order.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'customer'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def update_order(request, order_id):
     order = Order.objects.get(id=order_id)
     form = OrderForm(instance=order)
@@ -180,8 +200,8 @@ def update_order(request, order_id):
     return render(request, "order.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'customer'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin', 'customer'])
 def delete_order(request, order_id):
     order = Order.objects.get(id=order_id)
 
@@ -195,31 +215,32 @@ def delete_order(request, order_id):
     return render(request, "delete_order.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['customer'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
 def user_profile(request):
-
-    customer = request.user.customer
 
     orders = request.user.customer.order_set.all()
 
     orders_total = orders.count()
 
-    myFilter = OrderFilter(request.GET, queryset=orders)
-    orders = myFilter.qs
+    orders_delivered = orders.filter(status='Delivered').count()
+    orders_pending = orders.filter(status='Pending').count()
+    orders_out_for_delivery = orders.filter(status='Out for Delivery').count()
 
     context = {
         'customer': customer,
         'orders': orders,
         'total_orders': orders_total,
-        'filters': myFilter
+        'orders_delivered': orders_delivered,
+        'orders_pending': orders_pending,
+        'orders_out_for_delivery': orders_out_for_delivery
     }
 
-    return render(request, "users.html", context)
+    return render(request, "index.html", context)
 
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['customer'])
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['customer'])
 def profile_settings(request):
     customer = request.user.customer
     form = CustomerForm(instance=customer)
