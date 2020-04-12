@@ -17,29 +17,29 @@ from accounts.decorators import *
 @login_required(login_url='login')
 @admin_only
 def home(request):
-    # customers = Customer.objects.all()
-    # orders = Order.objects.all()
-    #
-    # total_customers = customers.count()
-    # total_orders = orders.count()
-    # orders_delivered = orders.filter(status='Delivered').count()
-    # orders_pending = orders.filter(status='Pending').count()
-    # orders_out_for_delivery = orders.filter(status='Out for Delivery').count()
-    # orders_cancelled = orders.filter(status='Cancelled').count()
-    #
-    # context = {
-    #     'customers_info': customers,
-    #     'orders_info': orders,
-    #     'total_customers': total_customers,
-    #     'total_orders': total_orders,
-    #     'orders_delivered': orders_delivered,
-    #     'orders_pending': orders_pending,
-    #     'orders_out_for_delivery': orders_out_for_delivery,
-    #     'orders_cancelled': orders_cancelled
-    # }
-    #
-    # return render(request, "index.html", context)
-    return render(request, "index.html")
+    customers = Customer.objects.all()
+    orders = Order.objects.all()
+
+    total_customers = customers.count()
+    total_orders = orders.count()
+    orders_delivered = orders.filter(status='Delivered').count()
+    orders_pending = orders.filter(status='Pending').count()
+    orders_out_for_delivery = orders.filter(status='Out for Delivery').count()
+    orders_cancelled = orders.filter(status='Cancelled').count()
+
+    context = {
+        'customers_info': customers,
+        'orders_info': orders,
+        'total_customers': total_customers,
+        'total_orders': total_orders,
+        'orders_delivered': orders_delivered,
+        'orders_pending': orders_pending,
+        'orders_out_for_delivery': orders_out_for_delivery,
+        'orders_cancelled': orders_cancelled
+    }
+
+    return render(request, "index.html", context)
+    # return render(request, "index.html")
 
 
 def page_not_found(request):
@@ -110,23 +110,26 @@ def register_page(request):
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
-def customer(request, customer_id):
-    customer = Customer.objects.get(id=customer_id)
-    orders = customer.order_set.all()
-
-    orders_total = customer.order_set.all().count()
-
-    myFilter = OrderFilter(request.GET, queryset=orders)
-    orders = myFilter.qs
+def customers(request):
+    view_customers = Customer.objects.all()
 
     context = {
-        'customer': customer,
-        'orders': orders,
-        'total_orders': orders_total,
-        'filters': myFilter
+        'customers': view_customers,
     }
 
-    return render(request, "index.html", context)
+    return render(request, "pages/customers.html", context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def customer_profile(request, customer_id):
+    get_customer = Customer.objects.get(id=customer_id)
+
+    context = {
+        'customer': get_customer
+    }
+
+    return render(request, "pages/customer_profile.html", context)
 
 
 @login_required(login_url='login')
@@ -217,8 +220,9 @@ def delete_order(request, order_id):
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['customer'])
-def user_profile(request):
+def user(request):
 
+    customer = request.user
     orders = request.user.customer.order_set.all()
 
     orders_total = orders.count()

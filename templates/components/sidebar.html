@@ -21,18 +21,33 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-            <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link">
-                    <i class="nav-icon fas fa-chart-line"></i>
-                    <p>Dashboard</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'order_list' %}" class="nav-link">
-                    <i class="nav-icon fas fa-cart-arrow-down"></i>
-                    <p>My Orders</p>
-                </a>
-            </li>
+            {% if request.user.is_staff %}
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'customers' %}" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Customers</p>
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'home' %}" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'order_list' %}" class="nav-link">
+                        <i class="nav-icon fas fa-cart-arrow-down"></i>
+                        <p>My Orders</p>
+                    </a>
+                </li>
+            {% endif %}
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
