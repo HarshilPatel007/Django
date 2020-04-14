@@ -53,6 +53,7 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
+          {% if not request.user.is_staff %}
             <div class="card-header">
                 <h3 class="card-title"> <b>{{ request.user.get_short_name }}</b>, here is your order(s) list with status.</h3>
             </div>
@@ -89,6 +90,51 @@
             </div>
             <!-- /.card-body -->
           </div>
+              {% else %}
+            <div class="card-header">
+                <h3 class="card-title">
+                    Total Orders : <b>{{ all_total_orders }}</b>  |
+                    Orders Delivered : <b>{{ all_delivered_orders }}</b>  |
+                    Orders Out for Delivery : <b>{{ all_out_for_delivery_orders }}</b>  |
+                    Pending Orders : <b>{{ all_pending_orders }}</b>
+                </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Date Ordered</th>
+                  <th>Status</th>
+                    <th>Who Ordered?</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in all_orders %}
+                <tr>
+                  <td>{{ order.product }}</td>
+                  <td>{{ order.product.category }}</td>
+                  <td>{{ order.product.date_created }}</td>
+                  <td>{{ order.status }}</td>
+                <td>{{ order.customer.user.get_full_name }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Date Ordered</th>
+                  <th>Status</th>
+                    <th>Who Ordered?</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+        {% endif %}
           <!-- /.card -->
         </div>
         <!-- /.col -->

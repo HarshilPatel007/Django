@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Registration Page</title>
+  <title>Django CRUD | Registration Page</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -23,14 +23,15 @@
 <body class="hold-transition register-page">
 <div class="register-box">
   <div class="register-logo">
-    <a href="../../index2.html"><b>Admin</b>LTE</a>
+    <a href="{% url 'home' %}"><b>Django</b>CRUD</a>
   </div>
 
   <div class="card">
     <div class="card-body register-card-body">
-      <p class="login-box-msg">Register a new membership</p>
+      <p class="login-box-msg">Register a new account</p>
 
-      <form action="../../index.html" method="post">
+      <form action="" method="post">
+          {% csrf_token %}
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Full name">
           <div class="input-group-append">
@@ -92,7 +93,7 @@
         </a>
       </div>
 
-      <a href=" {% url 'login' %}" class="text-center">I already have a membership</a>
+      <a href=" {% url 'login' %}" class="text-center">I already have a account</a>
     </div>
     <!-- /.form-box -->
   </div><!-- /.card -->

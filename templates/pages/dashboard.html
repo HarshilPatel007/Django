@@ -32,7 +32,7 @@
             <div class="icon">
               <i class="fa fa-shopping-cart"></i>
             </div>
-            <a href="{% url 'order_list' %}" class="small-box-footer">
+            <a href="{% if request.user.is_staff %} {% url 'admin_order_list' %} {% else %} {% url 'order_list' %} {% endif %}" class="small-box-footer">
               More info <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>
@@ -49,7 +49,7 @@
             <div class="icon">
               <i class="fa fa-shopping-cart"></i>
             </div>
-            <a href="{% url 'order_list' %}" class="small-box-footer">
+            <a href="{% if request.user.is_staff %} {% url 'admin_order_list' %} {% else %} {% url 'order_list' %} {% endif %}" class="small-box-footer">
               More info <i class="fa fa-arrow-circle-right"></i>
             </a>
             </div>
@@ -68,7 +68,7 @@
             <div class="icon">
               <i class="fa fa-shopping-cart"></i>
             </div>
-            <a href="{% url 'order_list' %}" class="small-box-footer">
+            <a href="{% if request.user.is_staff %} {% url 'admin_order_list' %} {% else %} {% url 'order_list' %} {% endif %}" class="small-box-footer">
               More info <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>
@@ -85,7 +85,7 @@
             <div class="icon">
               <i class="fa fa-shopping-cart"></i>
             </div>
-            <a href="{% url 'order_list' %}" class="small-box-footer">
+            <a href="{% if request.user.is_staff %} {% url 'admin_order_list' %} {% else %} {% url 'order_list' %} {% endif %}" class="small-box-footer">
               More info <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>

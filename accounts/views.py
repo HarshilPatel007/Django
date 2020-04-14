@@ -149,16 +149,34 @@ def product(request):
 def order_list(request):
 
     orders = request.user.customer.order_set.all()
-
     orders_total = orders.count()
-
-    myFilter = OrderFilter(request.GET, queryset=orders)
-    orders = myFilter.qs
 
     context = {
         'orders': orders,
         'total_orders': orders_total,
-        'filters': myFilter
+    }
+
+    return render(request, "pages/order-list.html", context)
+
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admin'])
+def admin_order_list(request):
+
+    all_orders = Order.objects.all()
+    all_total_orders = all_orders.count()
+    all_orders_delivered = all_orders.filter(status='Delivered').count()
+    all_orders_pending = all_orders.filter(status='Pending').count()
+    all_orders_out_for_delivery = all_orders.filter(status='Out for Delivery').count()
+    all_orders_cancelled = all_orders.filter(status='Cancelled').count()
+
+    context = {
+        'all_orders': all_orders,
+        'all_total_orders': all_total_orders,
+        'all_delivered_orders': all_orders_delivered,
+        'all_pending_orders': all_orders_pending,
+        'all_out_for_delivery_orders': all_orders_out_for_delivery,
+        'all_cancelled_orders': all_orders_cancelled
     }
 
     return render(request, "pages/order-list.html", context)
