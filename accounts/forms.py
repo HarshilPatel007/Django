@@ -18,7 +18,7 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = CustomUserModel
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'date_of_birth']
+        fields = [ 'first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'date_of_birth']
 
 
     # email = forms.EmailField(required=True, label="Email", max_length=100)

@@ -273,7 +273,8 @@ def profile_settings(request):
             form.save()
 
     context = {
-        'form':form
+        'form': form,
+        'customer': customer
     }
 
-    return render(request, "account_settings.html", context)
+    return render(request, "pages/profile_settings.html", context)

@@ -70,7 +70,6 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     # is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-
     first_name = models.CharField(verbose_name="first name", max_length=50, null=False, blank=False)
     last_name = models.CharField(verbose_name="last name", max_length=50, null=False, blank=False)
     date_of_birth = models.DateField(verbose_name="date of birth", null=False, blank=False)
