@@ -141,7 +141,7 @@ def product(request):
         'product_list': products
     }
 
-    return render(request, "products.html", context)
+    return render(request, "pages/products.html", context)
 
 
 @login_required(login_url='login')
