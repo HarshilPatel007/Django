@@ -45,6 +45,7 @@ def home(request):
 def page_not_found(request):
     return render(request, "pages/404.html")
 
+
 @redirect_anon_user
 def login_page(request):
 
@@ -278,3 +279,7 @@ def profile_settings(request):
     }
 
     return render(request, "pages/profile_settings.html", context)
+
+
+def website_home_page(request):
+    return render(request, "website/index.html")

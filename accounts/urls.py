@@ -18,5 +18,7 @@ urlpatterns = [
     path('create_order/', views.create_order, name="create_order"),
     path('update_order/<str:order_id>/', views.update_order, name="update_order"),
     path('delete_order/<str:order_id>/', views.delete_order, name="delete_order"),
-    path('404/', views.page_not_found, name='page_not_found')
+    path('404/', views.page_not_found, name='page_not_found'),
+
+    path('website/', views.website_home_page, name="website_home_page")
 ]
